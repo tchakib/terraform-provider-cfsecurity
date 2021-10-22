@@ -261,7 +261,7 @@ github.com/oklog/run
 ## explicit; go 1.16
 # github.com/onsi/gomega v1.16.0
 ## explicit; go 1.16
-# github.com/orange-cloudfoundry/cf-security-entitlement v0.1.24
+# github.com/orange-cloudfoundry/cf-security-entitlement v0.2.0
 ## explicit; go 1.17
 github.com/orange-cloudfoundry/cf-security-entitlement/clients
 github.com/orange-cloudfoundry/cf-security-entitlement/model
