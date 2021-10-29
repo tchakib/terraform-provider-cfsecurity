@@ -177,7 +177,7 @@ tags = ["key", "username", "generic"]
 [rules.allowlist]
 description = "A username in a terraform file is not a leak"
 regexes = ['''\w+?username\w+=''']
-files = ['''\.tf$''']
+files = ['''\.tf$''', '''^provider.go$''', '''^index.md$''']
 
 [[rules]]
 description = "Generic Credential"
@@ -188,6 +188,7 @@ tags = ["key", "API", "generic"]
 regexes = ['''xox[baprs]-([0-9a-zA-Z]{10,48})''',
     '''(?i)(.{0,20})?['"][0-9a-f]{32}-us[0-9]{1,2}['"]''',
     '''(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}''']
+files = ['''^provider.go$''']
 paths = ['''(vendor.github|Godeps._workspace)''']
 
 [[rules]]
@@ -229,5 +230,5 @@ file = '''(?i)^(id_rsa|passwd|pgpass|shadow)'''
 description = "Allowlisted files"
 files = ['''^\.?gitleaks.toml$''',
     '''(.*?)(png|jpg|gif|doc|docx|pdf|bin|xls|pyc|zip)$''',
-    '''(go.mod|go.sum)$''',
-    '''^vendor\/.*''']
+    '''(go.mod|go.sum)$''']
+paths = ['''vendor''']
