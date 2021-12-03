@@ -8,7 +8,7 @@ require (
 	github.com/cloudfoundry-community/go-cfclient v0.0.0-20210823134051-721f0e559306
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/terraform-plugin-sdk v1.17.2
-	github.com/orange-cloudfoundry/cf-security-entitlement v0.4.1
+	github.com/orange-cloudfoundry/cf-security-entitlement v0.4.2
 )
 
 require (
@@ -54,7 +54,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
+	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
