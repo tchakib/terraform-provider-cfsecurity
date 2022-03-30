@@ -8,7 +8,7 @@ require (
 	github.com/cloudfoundry-community/go-cfclient v0.0.0-20210823134051-721f0e559306
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/terraform-plugin-sdk v1.17.2
-	github.com/orange-cloudfoundry/cf-security-entitlement v0.8.0
+	github.com/orange-cloudfoundry/cf-security-entitlement v0.10.0
 )
 
 require (
@@ -72,8 +72,8 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.58.0 // indirect
