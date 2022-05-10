@@ -268,7 +268,7 @@ github.com/oklog/run
 ## explicit; go 1.16
 # github.com/onsi/gomega v1.16.0
 ## explicit; go 1.16
-# github.com/orange-cloudfoundry/cf-security-entitlement v0.15.0
+# github.com/orange-cloudfoundry/cf-security-entitlement v0.16.0
 ## explicit; go 1.18
 github.com/orange-cloudfoundry/cf-security-entitlement/clients
 github.com/orange-cloudfoundry/cf-security-entitlement/model
@@ -335,7 +335,7 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+# golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 ## explicit; go 1.17
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
@@ -348,7 +348,7 @@ golang.org/x/crypto/openpgp/packet
 golang.org/x/crypto/openpgp/s2k
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
-# golang.org/x/net v0.0.0-20220412020605-290c469a71a5
+# golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 ## explicit; go 1.17
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
