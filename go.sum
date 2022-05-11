@@ -404,8 +404,8 @@ github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7J
 github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
 github.com/onsi/gomega v1.16.0 h1:6gjqkI8iiRHMvdccRJM8rVKjCWk6ZIm6FTm3ddIe4/c=
 github.com/onsi/gomega v1.16.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
-github.com/orange-cloudfoundry/cf-security-entitlement v0.16.0 h1:jS2x5g+koDs3BFu+b+SB0XNjHTXLOqfP3q8VNiuyE7U=
-github.com/orange-cloudfoundry/cf-security-entitlement v0.16.0/go.mod h1:2w3rEZegWoNwG+u7xx05Kkvws/g2Sn481zVa4df32Jo=
+github.com/orange-cloudfoundry/cf-security-entitlement v0.17.0 h1:/XDfzSAO2fjxMM7urIGgXQz1neBAsB7w125w3fnVvqc=
+github.com/orange-cloudfoundry/cf-security-entitlement v0.17.0/go.mod h1:Bw7f3oQyFJcJ1glAJ8o698dBLIurFg5TN+pxum1pqfg=
 github.com/oxtoacart/bpool v0.0.0-20150712133111-4e1c5567d7c2 h1:CXwSGu/LYmbjEab5aMCs5usQRVBGThelUKBNnoSOuso=
 github.com/oxtoacart/bpool v0.0.0-20150712133111-4e1c5567d7c2/go.mod h1:L3UMQOThbttwfYRNFOWLLVXMhk5Lkio4GGOtw5UrxS0=
 github.com/pierrec/lz4 v2.0.5+incompatible/go.mod h1:pdkljMzZIN41W+lC3N2tnIh5sFi+IEE17M5jbnwPHcY=
