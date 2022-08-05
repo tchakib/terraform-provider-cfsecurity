@@ -2,7 +2,7 @@ package cfsecurity
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/orange-cloudfoundry/cf-security-entitlement/clients"
+	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
 func dataSourceAsg() *schema.Resource {
@@ -22,11 +22,11 @@ func dataSourceAsg() *schema.Resource {
 }
 
 func dataSourceAsgRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*clients.Client)
-	secGroup, err := client.GetSecGroupByName(d.Get("name").(string))
+	clients := meta.(*client.Client)
+	secGroup, err := clients.GetSecGroupByName(d.Get("name").(string))
 	if err != nil {
 		return err
 	}
-	d.SetId(secGroup.Guid)
+	d.SetId(secGroup.GUID)
 	return nil
 }

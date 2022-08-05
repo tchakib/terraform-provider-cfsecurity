@@ -1,12 +1,15 @@
 package cfsecurity
 
 import (
-	"github.com/cloudfoundry-community/go-cfclient"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/orange-cloudfoundry/cf-security-entitlement/clients"
+	"crypto/tls"
+	"net/http"
 	"net/url"
 	"strings"
+
+	clients "github.com/cloudfoundry-community/go-cf-clients-helper/v2"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
 // Provider -
@@ -65,18 +68,25 @@ func Provider() terraform.ResourceProvider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	config := &cfclient.Config{
-		ApiAddress:        d.Get("cf_api_url").(string),
-		Username:          d.Get("user").(string),
+	// config := &cfclient.Config{
+	// 	ApiAddress:        d.Get("cf_api_url").(string),
+	// 	Username:          d.Get("user").(string),
+	// 	Password:          d.Get("password").(string),
+	// 	ClientID:          d.Get("cf_client_id").(string),
+	// 	ClientSecret:      d.Get("cf_client_secret").(string),
+	// 	SkipSslValidation: d.Get("skip_ssl_validation").(bool),
+	// }
+
+	config := &clients.Config{
+		Endpoint:          d.Get("cf_api_url").(string),
+		User:              d.Get("user").(string),
 		Password:          d.Get("password").(string),
-		ClientID:          d.Get("cf_client_id").(string),
-		ClientSecret:      d.Get("cf_client_secret").(string),
+		CFClientID:        d.Get("cf_client_id").(string),
+		CFClientSecret:    d.Get("cf_client_secret").(string),
 		SkipSslValidation: d.Get("skip_ssl_validation").(bool),
 	}
-	cfClient, err := cfclient.NewClient(config)
-	if err != nil {
-		return nil, err
-	}
+	s, err := clients.NewSession(*config)
+
 	uri, err := url.Parse(d.Get("cf_api_url").(string))
 	if err != nil {
 		return nil, err
@@ -91,5 +101,9 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		securityEndpoint = tmpSecEndpoint.(string)
 	}
 
-	return clients.NewClient(securityEndpoint, cfClient), nil
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: s.ConfigStore().SkipSSLValidation()},
+	}
+
+	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint, *tr), nil
 }
