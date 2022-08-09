@@ -97,9 +97,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		securityEndpoint = tmpSecEndpoint.(string)
 	}
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: s.ConfigStore().SkipSSLValidation()},
-	}
+	// tr := &http.Transport{
+	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
+	// }
 
-	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint, *tr), nil
+	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
+		http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
+		}), nil
 }
