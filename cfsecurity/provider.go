@@ -68,14 +68,6 @@ func Provider() terraform.ResourceProvider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	// config := &cfclient.Config{
-	// 	ApiAddress:        d.Get("cf_api_url").(string),
-	// 	Username:          d.Get("user").(string),
-	// 	Password:          d.Get("password").(string),
-	// 	ClientID:          d.Get("cf_client_id").(string),
-	// 	ClientSecret:      d.Get("cf_client_secret").(string),
-	// 	SkipSslValidation: d.Get("skip_ssl_validation").(bool),
-	// }
 
 	config := &clients.Config{
 		Endpoint:          d.Get("cf_api_url").(string),
@@ -85,7 +77,11 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		CFClientSecret:    d.Get("cf_client_secret").(string),
 		SkipSslValidation: d.Get("skip_ssl_validation").(bool),
 	}
+
 	s, err := clients.NewSession(*config)
+	if err != nil {
+		return nil, err
+	}
 
 	uri, err := url.Parse(d.Get("cf_api_url").(string))
 	if err != nil {
