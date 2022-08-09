@@ -1,11 +1,12 @@
 package cfsecurity
 
 import (
-	"github.com/cloudfoundry-community/go-cfclient"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"hash/crc32"
 	"net/http"
 	"reflect"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
 // getListOfStructs
@@ -96,7 +97,7 @@ func isInSlice(objects interface{}, match func(object interface{}) bool) bool {
 }
 
 func isNotFoundErr(err error) bool {
-	if httpErr, ok := err.(cfclient.CloudFoundryHTTPError); ok {
+	if httpErr, ok := err.(client.CloudFoundryHTTPError); ok {
 		return httpErr.StatusCode == http.StatusNotFound
 	}
 	return false
