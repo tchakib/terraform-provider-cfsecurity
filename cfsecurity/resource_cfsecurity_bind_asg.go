@@ -105,7 +105,7 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 			return false
 		}
 		spaces, _ := clients.GetSecGroupSpaces(secGroup.GUID)
-		return isInSlice(spaces, func(object interface{}) bool {
+		return isInSlice(spaces.Resources, func(object interface{}) bool {
 			space := object.(client.Space)
 			return space.GUID == spaceIDTf
 		})
