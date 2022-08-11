@@ -96,7 +96,7 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	secGroupsTf := getListOfStructs(d.Get("bind"))
-	finalBinds := intersectSlices(secGroupsTf, secGroups, func(source, item interface{}) bool {
+	finalBinds := intersectSlices(secGroupsTf, secGroups.Resources, func(source, item interface{}) bool {
 		secGroupTf := source.(map[string]interface{})
 		secGroup := item.(client.SecurityGroup)
 		asgIDTf := secGroupTf["asg_id"].(string)
