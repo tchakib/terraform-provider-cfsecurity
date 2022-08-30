@@ -8,7 +8,7 @@ require (
 	github.com/cloudfoundry-community/go-cf-clients-helper/v2 v2.0.3
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-sdk v1.17.2
-	github.com/orange-cloudfoundry/cf-security-entitlement v0.29.1
+	github.com/orange-cloudfoundry/cf-security-entitlement v0.29.2
 )
 
 require (
