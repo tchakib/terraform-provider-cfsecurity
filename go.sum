@@ -525,8 +525,8 @@ github.com/onsi/gomega v1.10.5/go.mod h1:gza4q3jKQJijlu05nKWRCW/GavJumGt8aNRxWg7
 github.com/onsi/gomega v1.16.0 h1:6gjqkI8iiRHMvdccRJM8rVKjCWk6ZIm6FTm3ddIe4/c=
 github.com/onsi/gomega v1.16.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
 github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
-github.com/orange-cloudfoundry/cf-security-entitlement v0.29.4 h1:+IlUQQUiM8qIGpsotMyrzlfr5owlQgNBphgshiSyA6Y=
-github.com/orange-cloudfoundry/cf-security-entitlement v0.29.4/go.mod h1:0lhO9AVEwcq9b2mEr9hh8KPT6YaBIlBsPlexQsCUgQA=
+github.com/orange-cloudfoundry/cf-security-entitlement v0.29.5 h1:sYlF5tG29xFpfwoiV07mthtI9Gh701NrWi1u+iNofZ0=
+github.com/orange-cloudfoundry/cf-security-entitlement v0.29.5/go.mod h1:NN1Tn7WVqvNcxRiXiW+g0RKxEWco8pnpS831rpgixOY=
 github.com/pborman/uuid v0.0.0-20180906182336-adf5a7427709/go.mod h1:VyrYX9gd7irzKovcSS6BIIEwPRkP2Wm2m9ufcdFSJ34=
 github.com/pierrec/lz4 v2.0.5+incompatible/go.mod h1:pdkljMzZIN41W+lC3N2tnIh5sFi+IEE17M5jbnwPHcY=
 github.com/pivotal-cf/brokerapi/v7 v7.2.0/go.mod h1:5QRQ8vJmav91F+AvY5NA/QoDOq70XgBVxXKUK4N/cNE=
