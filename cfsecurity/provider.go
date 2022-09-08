@@ -155,7 +155,7 @@ func getExpiresAtFromToken(accessToken string) (time.Time, error) {
 
 }
 
-func refreshTokenIfExpires(manager *Manager) error {
+func refreshTokenIfExpired(manager *Manager) error {
 
 	expiresAt, err := getExpiresAtFromToken(*manager.client.GetAccessToken())
 	if err != nil {

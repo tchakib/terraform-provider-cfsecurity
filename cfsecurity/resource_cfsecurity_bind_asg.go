@@ -58,7 +58,7 @@ func resourceBindAsg() *schema.Resource {
 func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceBindAsgDelete(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}

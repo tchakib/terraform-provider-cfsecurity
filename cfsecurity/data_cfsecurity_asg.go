@@ -23,7 +23,7 @@ func dataSourceAsg() *schema.Resource {
 func dataSourceAsgRead(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}

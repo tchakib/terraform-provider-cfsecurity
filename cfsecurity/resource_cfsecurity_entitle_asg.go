@@ -54,7 +54,7 @@ func resourceEntitleAsg() *schema.Resource {
 func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceEntitleAsgDelete(d *schema.ResourceData, meta interface{}) error {
 	manager := meta.(*Manager)
-	err := refreshTokenIfExpires(manager)
+	err := refreshTokenIfExpired(manager)
 	if err != nil {
 		return err
 	}
