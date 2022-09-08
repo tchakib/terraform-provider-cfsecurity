@@ -56,9 +56,9 @@ func resourceBindAsg() *schema.Resource {
 }
 
 func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(d, clients)
+	err := refreshTokenIfExpires(manager)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	for _, elem := range getListOfStructs(d.Get("bind")) {
-		err := clients.BindSecurityGroup(elem["asg_id"].(string), elem["space_id"].(string), clients.GetEndpoint())
+		err := manager.client.BindSecurityGroup(elem["asg_id"].(string), elem["space_id"].(string), manager.client.GetEndpoint())
 		if err != nil {
 			return err
 		}
@@ -79,19 +79,19 @@ func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(d, clients)
+	err := refreshTokenIfExpires(manager)
 	if err != nil {
 		return err
 	}
 
-	secGroups, err := clients.ListSecGroups()
+	secGroups, err := manager.client.ListSecGroups()
 	if err != nil {
 		return err
 	}
 
-	userIsAdmin, _ := clients.CurrentUserIsAdmin()
+	userIsAdmin, _ := manager.client.CurrentUserIsAdmin()
 	// check if force and if user is not an admin
 	if d.Get("force").(bool) && !userIsAdmin {
 		finalBinds := make([]map[string]interface{}, 0)
@@ -116,7 +116,7 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 		if asgIDTf != secGroup.GUID {
 			return false
 		}
-		spaces, _ := clients.GetSecGroupSpaces(secGroup.GUID)
+		spaces, _ := manager.client.GetSecGroupSpaces(secGroup.GUID)
 		return isInSlice(spaces.Resources, func(object interface{}) bool {
 			space := object.(client.Space)
 			return space.GUID == spaceIDTf
@@ -127,9 +127,9 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(d, clients)
+	err := refreshTokenIfExpires(manager)
 	if err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	})
 	if len(remove) > 0 {
 		for _, bind := range remove {
-			err := clients.UnBindSecurityGroup(bind["asg_id"].(string), bind["space_id"].(string), clients.GetEndpoint())
+			err := manager.client.UnBindSecurityGroup(bind["asg_id"].(string), bind["space_id"].(string), manager.client.GetEndpoint())
 			if err != nil && !isNotFoundErr(err) {
 				return err
 			}
@@ -150,7 +150,7 @@ func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if len(add) > 0 {
 		for _, bind := range add {
-			err := clients.BindSecurityGroup(bind["asg_id"].(string), bind["space_id"].(string), clients.GetEndpoint())
+			err := manager.client.BindSecurityGroup(bind["asg_id"].(string), bind["space_id"].(string), manager.client.GetEndpoint())
 			if err != nil {
 				return err
 			}
@@ -161,15 +161,15 @@ func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceBindAsgDelete(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(d, clients)
+	err := refreshTokenIfExpires(manager)
 	if err != nil {
 		return err
 	}
 
 	for _, elem := range getListOfStructs(d.Get("bind")) {
-		err := clients.UnBindSecurityGroup(elem["asg_id"].(string), elem["space_id"].(string), clients.GetEndpoint())
+		err := manager.client.UnBindSecurityGroup(elem["asg_id"].(string), elem["space_id"].(string), manager.client.GetEndpoint())
 		if err != nil && !isNotFoundErr(err) {
 			return err
 		}

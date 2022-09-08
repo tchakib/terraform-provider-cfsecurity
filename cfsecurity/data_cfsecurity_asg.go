@@ -2,7 +2,6 @@ package cfsecurity
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
 func dataSourceAsg() *schema.Resource {
@@ -22,14 +21,14 @@ func dataSourceAsg() *schema.Resource {
 }
 
 func dataSourceAsgRead(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	err := refreshTokenIfExpires(d, clients)
+	err := refreshTokenIfExpires(manager)
 	if err != nil {
 		return err
 	}
 
-	secGroup, err := clients.GetSecGroupByName(d.Get("name").(string))
+	secGroup, err := manager.client.GetSecGroupByName(d.Get("name").(string))
 	if err != nil {
 		return err
 	}

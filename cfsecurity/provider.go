@@ -16,6 +16,16 @@ import (
 	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
+type Manager struct {
+	client            *client.Client
+	Endpoint          string
+	User              string
+	Password          string
+	CFClientID        string
+	CFClientSecret    string
+	SkipSslValidation bool
+}
+
 // Provider -
 func Provider() terraform.ResourceProvider {
 
@@ -101,10 +111,19 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		securityEndpoint = tmpSecEndpoint.(string)
 	}
 
-	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
-		&http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
-		}), nil
+	manager := Manager{
+		client: client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
+			&http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
+			}),
+		Endpoint:          d.Get("cf_api_url").(string),
+		User:              d.Get("user").(string),
+		Password:          d.Get("password").(string),
+		CFClientID:        d.Get("cf_client_id").(string),
+		CFClientSecret:    d.Get("cf_client_secret").(string),
+		SkipSslValidation: d.Get("skip_ssl_validation").(bool)}
+
+	return manager, nil
 }
 
 func getExpiresAtFromToken(accessToken string) (time.Time, error) {
@@ -136,9 +155,9 @@ func getExpiresAtFromToken(accessToken string) (time.Time, error) {
 
 }
 
-func refreshTokenIfExpires(d *schema.ResourceData, c *client.Client) error {
+func refreshTokenIfExpires(manager *Manager) error {
 
-	expiresAt, err := getExpiresAtFromToken(*c.GetAccessToken())
+	expiresAt, err := getExpiresAtFromToken(*manager.client.GetAccessToken())
 	if err != nil {
 		return err
 	}
@@ -146,12 +165,12 @@ func refreshTokenIfExpires(d *schema.ResourceData, c *client.Client) error {
 	if expiresAt.Before(time.Now()) {
 
 		config := &clients.Config{
-			Endpoint:          d.Get("cf_api_url").(string),
-			User:              d.Get("user").(string),
-			Password:          d.Get("password").(string),
-			CFClientID:        d.Get("cf_client_id").(string),
-			CFClientSecret:    d.Get("cf_client_secret").(string),
-			SkipSslValidation: d.Get("skip_ssl_validation").(bool),
+			Endpoint:          manager.Endpoint,
+			User:              manager.User,
+			Password:          manager.Password,
+			CFClientID:        manager.CFClientID,
+			CFClientSecret:    manager.CFClientSecret,
+			SkipSslValidation: manager.SkipSslValidation,
 		}
 
 		s, err := clients.NewSession(*config)
@@ -163,7 +182,7 @@ func refreshTokenIfExpires(d *schema.ResourceData, c *client.Client) error {
 		if err != nil {
 			return err
 		}
-		c.SetAccessToken(accessToken)
+		manager.client.SetAccessToken(accessToken)
 		return nil
 
 	}
