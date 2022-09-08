@@ -136,7 +136,7 @@ func getExpiresAtFromToken(accessToken string) (time.Time, error) {
 
 }
 
-func refreshTokenIfExpires(d *schema.ResourceData, c client.Client) error {
+func refreshTokenIfExpires(d *schema.ResourceData, c *client.Client) error {
 
 	expiresAt, err := getExpiresAtFromToken(*c.GetAccessToken())
 	if err != nil {

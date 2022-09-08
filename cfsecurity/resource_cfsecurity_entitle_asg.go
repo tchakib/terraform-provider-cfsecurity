@@ -55,7 +55,7 @@ func resourceEntitleAsg() *schema.Resource {
 func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
 
-	err := refreshTokenIfExpires(d, *clients)
+	err := refreshTokenIfExpires(d, clients)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
 
-	err := refreshTokenIfExpires(d, *clients)
+	err := refreshTokenIfExpires(d, clients)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
 
-	err := refreshTokenIfExpires(d, *clients)
+	err := refreshTokenIfExpires(d, clients)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceEntitleAsgDelete(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
-	err := refreshTokenIfExpires(d, *clients)
+	err := refreshTokenIfExpires(d, clients)
 	if err != nil {
 		return err
 	}
