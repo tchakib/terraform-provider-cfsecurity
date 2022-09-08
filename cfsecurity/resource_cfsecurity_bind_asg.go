@@ -57,6 +57,12 @@ func resourceBindAsg() *schema.Resource {
 
 func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	id, err := uuid.GenerateUUID()
 	if err != nil {
 		return err
@@ -74,6 +80,12 @@ func resourceBindAsgCreate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	secGroups, err := clients.ListSecGroups()
 	if err != nil {
 		return err
@@ -117,6 +129,11 @@ func resourceBindAsgRead(d *schema.ResourceData, meta interface{}) error {
 func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
 
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	old, now := d.GetChange("bind")
 	remove, add := getListMapChanges(old, now, func(source, item map[string]interface{}) bool {
 		return source["asg_id"] == item["asg_id"] &&
@@ -145,6 +162,12 @@ func resourceBindAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceBindAsgDelete(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	for _, elem := range getListOfStructs(d.Get("bind")) {
 		err := clients.UnBindSecurityGroup(elem["asg_id"].(string), elem["space_id"].(string), clients.GetEndpoint())
 		if err != nil && !isNotFoundErr(err) {

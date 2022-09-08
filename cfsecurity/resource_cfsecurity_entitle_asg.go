@@ -77,6 +77,11 @@ func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
 
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	entitlements, err := clients.ListSecGroupEntitlements()
 	if err != nil {
 		return err
@@ -94,6 +99,12 @@ func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	old, now := d.GetChange("entitle")
 	remove, add := getListMapChanges(old, now, func(source, item map[string]interface{}) bool {
 		return source["asg_id"] == item["asg_id"] &&
@@ -121,6 +132,10 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceEntitleAsgDelete(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
 	for _, elem := range getListOfStructs(d.Get("entitle")) {
 		err := clients.RevokeSecurityGroup(elem["asg_id"].(string), elem["org_id"].(string))
 		if err != nil && !isNotFoundErr(err) {

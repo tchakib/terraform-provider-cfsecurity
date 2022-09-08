@@ -16,8 +16,6 @@ import (
 	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
 
-var expiresAt time.Time
-
 // Provider -
 func Provider() terraform.ResourceProvider {
 
@@ -103,13 +101,8 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		securityEndpoint = tmpSecEndpoint.(string)
 	}
 
-	expiresAt, err = getExpiresAtFromToken(s.ConfigStore().AccessToken())
-	if err != nil {
-		return nil, err
-	}
-
 	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
-		http.Transport{
+		&http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
 		}), nil
 }
@@ -135,7 +128,8 @@ func getExpiresAtFromToken(accessToken string) (time.Time, error) {
 	}
 
 	expAt := time.Unix(int64(token.Exp), 0)
-	// Ajout d'une marge d'une minute pour l'expiration
+
+	// Taking a minute off the timer to have a margin of error
 	expAtBefore := expAt.Add(time.Duration(-1) * time.Minute)
 
 	return expAtBefore, nil
@@ -143,9 +137,13 @@ func getExpiresAtFromToken(accessToken string) (time.Time, error) {
 }
 
 func refreshTokenIfExpires(d *schema.ResourceData, c client.Client) error {
-	isExpires := false
+
+	expiresAt, err := getExpiresAtFromToken(*c.GetAccessToken())
+	if err != nil {
+		return err
+	}
+
 	if expiresAt.Before(time.Now()) {
-		isExpires = true
 
 		config := &clients.Config{
 			Endpoint:          d.Get("cf_api_url").(string),
@@ -162,16 +160,11 @@ func refreshTokenIfExpires(d *schema.ResourceData, c client.Client) error {
 		}
 
 		accessToken := s.ConfigStore().AccessToken()
-		refreshExpiresAt, err := getExpiresAtFromToken(accessToken)
 		if err != nil {
 			return err
 		}
-
-		if isExpires {
-			expiresAt = refreshExpiresAt
-			c.SetAccessToken(accessToken)
-			return nil
-		}
+		c.SetAccessToken(accessToken)
+		return nil
 
 	}
 	return nil

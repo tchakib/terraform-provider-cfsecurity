@@ -23,6 +23,12 @@ func dataSourceAsg() *schema.Resource {
 
 func dataSourceAsgRead(d *schema.ResourceData, meta interface{}) error {
 	clients := meta.(*client.Client)
+
+	err := refreshTokenIfExpires(d, *clients)
+	if err != nil {
+		return err
+	}
+
 	secGroup, err := clients.GetSecGroupByName(d.Get("name").(string))
 	if err != nil {
 		return err
