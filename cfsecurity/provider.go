@@ -2,15 +2,29 @@ package cfsecurity
 
 import (
 	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	clients "github.com/cloudfoundry-community/go-cf-clients-helper/v2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 )
+
+type Manager struct {
+	client            *client.Client
+	Endpoint          string
+	User              string
+	Password          string
+	CFClientID        string
+	CFClientSecret    string
+	SkipSslValidation bool
+}
 
 // Provider -
 func Provider() terraform.ResourceProvider {
@@ -97,12 +111,81 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		securityEndpoint = tmpSecEndpoint.(string)
 	}
 
-	// tr := &http.Transport{
-	// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
-	// }
+	manager := Manager{
+		client: client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
+			&http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
+			}),
+		Endpoint:          d.Get("cf_api_url").(string),
+		User:              d.Get("user").(string),
+		Password:          d.Get("password").(string),
+		CFClientID:        d.Get("cf_client_id").(string),
+		CFClientSecret:    d.Get("cf_client_secret").(string),
+		SkipSslValidation: d.Get("skip_ssl_validation").(bool)}
 
-	return client.NewClient(securityEndpoint, s.V3(), s.ConfigStore().AccessToken(), config.Endpoint,
-		http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: d.Get("skip_ssl_validation").(bool)},
-		}), nil
+	return manager, nil
+}
+
+func getExpiresAtFromToken(accessToken string) (time.Time, error) {
+	tokenSplit := strings.Split(accessToken, ".")
+	if len(tokenSplit) < 3 {
+		return time.Now(), fmt.Errorf("not a jwt")
+	}
+
+	decodeToken, err := base64.RawStdEncoding.DecodeString(tokenSplit[1])
+	if err != nil {
+		return time.Now(), err
+	}
+
+	token := struct {
+		Exp int `json:"exp"`
+	}{}
+
+	err = json.Unmarshal(decodeToken, &token)
+	if err != nil {
+		return time.Now(), err
+	}
+
+	expAt := time.Unix(int64(token.Exp), 0)
+
+	// Taking a minute off the timer to have a margin of error
+	expAtBefore := expAt.Add(time.Duration(-1) * time.Minute)
+
+	return expAtBefore, nil
+
+}
+
+func refreshTokenIfExpired(manager *Manager) error {
+
+	expiresAt, err := getExpiresAtFromToken(*manager.client.GetAccessToken())
+	if err != nil {
+		return err
+	}
+
+	if expiresAt.Before(time.Now()) {
+
+		config := &clients.Config{
+			Endpoint:          manager.Endpoint,
+			User:              manager.User,
+			Password:          manager.Password,
+			CFClientID:        manager.CFClientID,
+			CFClientSecret:    manager.CFClientSecret,
+			SkipSslValidation: manager.SkipSslValidation,
+		}
+
+		s, err := clients.NewSession(*config)
+		if err != nil {
+			return err
+		}
+
+		accessToken := s.ConfigStore().AccessToken()
+		if err != nil {
+			return err
+		}
+		manager.client.SetAccessToken(accessToken)
+		return nil
+
+	}
+	return nil
+
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/orange-cloudfoundry/cf-security-entitlement/client"
 	"github.com/orange-cloudfoundry/cf-security-entitlement/model"
 )
 
@@ -53,13 +52,19 @@ func resourceEntitleAsg() *schema.Resource {
 }
 
 func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
+
+	err := refreshTokenIfExpired(manager)
+	if err != nil {
+		return err
+	}
+
 	id, err := uuid.GenerateUUID()
 	if err != nil {
 		return err
 	}
 	for _, elem := range getListOfStructs(d.Get("entitle")) {
-		err := clients.EntitleSecurityGroup(elem["asg_id"].(string), elem["org_id"].(string))
+		err := manager.client.EntitleSecurityGroup(elem["asg_id"].(string), elem["org_id"].(string))
 		if err != nil {
 			return err
 		}
@@ -69,9 +74,14 @@ func resourceEntitleAsgCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
 
-	entitlements, err := clients.ListSecGroupEntitlements()
+	err := refreshTokenIfExpired(manager)
+	if err != nil {
+		return err
+	}
+
+	entitlements, err := manager.client.ListSecGroupEntitlements()
 	if err != nil {
 		return err
 	}
@@ -87,7 +97,13 @@ func resourceEntitleAsgRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
+
+	err := refreshTokenIfExpired(manager)
+	if err != nil {
+		return err
+	}
+
 	old, now := d.GetChange("entitle")
 	remove, add := getListMapChanges(old, now, func(source, item map[string]interface{}) bool {
 		return source["asg_id"] == item["asg_id"] &&
@@ -95,7 +111,7 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	})
 	if len(remove) > 0 {
 		for _, r := range remove {
-			err := clients.RevokeSecurityGroup(r["asg_id"].(string), r["org_id"].(string))
+			err := manager.client.RevokeSecurityGroup(r["asg_id"].(string), r["org_id"].(string))
 			if err != nil && !isNotFoundErr(err) {
 				return err
 			}
@@ -104,7 +120,7 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if len(add) > 0 {
 		for _, a := range add {
-			err := clients.EntitleSecurityGroup(a["asg_id"].(string), a["org_id"].(string))
+			err := manager.client.EntitleSecurityGroup(a["asg_id"].(string), a["org_id"].(string))
 			if err != nil {
 				return err
 			}
@@ -114,9 +130,13 @@ func resourceEntitleAsgUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceEntitleAsgDelete(d *schema.ResourceData, meta interface{}) error {
-	clients := meta.(*client.Client)
+	manager := meta.(*Manager)
+	err := refreshTokenIfExpired(manager)
+	if err != nil {
+		return err
+	}
 	for _, elem := range getListOfStructs(d.Get("entitle")) {
-		err := clients.RevokeSecurityGroup(elem["asg_id"].(string), elem["org_id"].(string))
+		err := manager.client.RevokeSecurityGroup(elem["asg_id"].(string), elem["org_id"].(string))
 		if err != nil && !isNotFoundErr(err) {
 			return err
 		}
