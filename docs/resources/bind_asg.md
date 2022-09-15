@@ -14,7 +14,7 @@ Bind a security group to an org through cfsecurity server (useful only for org m
 Basic usage
 
 ```hcl
-resource "cfsecurity_entitle_asg" "my-bindings" {
+resource "cfsecurity_bind_asg" "my-bindings" {
   bind {
     asg_id   = "dcee7d89-149b-4bab-9eb9-1e5e73c22aae"
     space_id = "7e0477b9-fff8-41b1-8fd8-969095ba62e5"
